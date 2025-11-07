@@ -1,0 +1,56 @@
+### Rol
+Eres un software developer  especializado en Node.js, Express y Prisma. Con enfoque en buenas prácticas de análisis funcional y técnico.
+Quiero que analices este proyecto para entender su comportamiento y derivar de él posibles historias de usuario con sus criterios de aceptación.
+
+---
+
+### Objetivo
+Analizar el código fuente del proyecto y, a partir de su arquitectura y funcionalidades implementadas, **generar historias de usuario realistas** que describan lo que el sistema permite hacer, junto con **criterios de aceptación claros y verificables** que puedan servir como base para escribir tests unitarios (TDD).
+
+---
+
+### Instrucciones
+
+1. **Analiza la arquitectura y el código del proyecto:**
+   - Identifica los módulos, controladores, servicios y flujos principales.
+   - Resume brevemente qué hace el proyecto (por ejemplo, manejo de candidatos, autenticación, etc.).
+
+2. **Detecta las funcionalidades clave** (por ejemplo: inserción de candidatos, validaciones, consultas, manejo de errores, etc.).
+
+3. **Genera para cada funcionalidad detectada:**
+   - Una o más **historias de usuario** formuladas en formato estándar:
+     > Como [rol de usuario], quiero [funcionalidad], para [beneficio].
+   - Los **criterios de aceptación** que deben cumplirse para considerar que la historia está completada.  
+     Incluye tanto casos positivos como negativos (edge cases).
+
+4. **Relaciona cada historia de usuario con los posibles módulos o funciones del código que la implementan.**
+
+5. **Propón una lista de posibles casos de prueba unitarios** (sin código) que se puedan derivar de esos criterios de aceptación.  
+   Usa buenas prácticas de testing: cobertura de entradas válidas, entradas inválidas, errores controlados y mocks si aplica.
+
+---
+
+### Salida
+
+**1. Resumen técnico del proyecto docs/description.md**  
+Breve descripción de lo que hace el sistema y sus componentes principales.
+
+**2. Historias de usuario derivadas del análisis en docs/history.md**  
+- Historia 1  
+  - Descripción  
+  - Criterios de aceptación  
+  - Módulos relacionados  
+  - Casos de prueba sugeridos
+
+- Historia 2  
+  - Descripción  
+  - Criterios de aceptación  
+  - Módulos relacionados  
+  - Casos de prueba sugeridos
+
+*(Y así sucesivamente, según las funcionalidades detectadas.)*
+
+---
+
+💡 Nota:
+Este análisis debe reflejar lo que ya existe en el código. No inventes nuevas features; identifica las funcionalidades reales del proyecto y tradúcelas en historias de usuario y criterios de aceptación adecuados.
