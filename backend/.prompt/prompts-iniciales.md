@@ -33,7 +33,7 @@
 
 **Archivo prompt:** `.generate-test.md`
 
-**Salida:** Archivos de test unitario por historia: `backend/src/tests/historia-usuario-<numero>.test.ts`
+**Salida:** Archivos de test unitario por historia, validados y verificados: `backend/src/tests/historia-usuario-<numero>.test.ts`
 
 ---
 
