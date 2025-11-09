@@ -32,13 +32,13 @@ export class Education {
         }
 
         if (this.id) {
-            // Actualizar una experiencia laboral existente
+            // Actualizar una educación existente
             return await prisma.education.update({
                 where: { id: this.id },
                 data: educationData
             });
         } else {
-            // Crear una nueva experiencia laboral
+            // Crear una nueva educación
             return await prisma.education.create({
                 data: educationData
             });

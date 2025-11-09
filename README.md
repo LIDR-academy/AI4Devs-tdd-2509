@@ -78,6 +78,123 @@ npm start
 
 The backend server will be running at http://localhost:3010, and the frontend will be available at http://localhost:3000.
 
+## Running Tests
+
+This project includes comprehensive unit tests for both backend and frontend with high code coverage targets.
+
+### Backend Tests
+
+The backend uses **Jest** with **ts-jest** for TypeScript support. Code coverage threshold is set to **≥ 90%**.
+
+#### Prerequisites
+All testing dependencies are already included in `package.json`. If you need to reinstall:
+```sh
+cd backend
+npm install
+```
+
+#### Run Tests
+```sh
+cd backend
+
+# Run all tests
+npm test
+
+# Run tests with coverage report
+npm run test:coverage
+
+# Run tests in watch mode (auto-rerun on file changes)
+npm run test:watch
+
+# Run tests in verbose mode
+npm run test:verbose
+```
+
+#### Coverage Report
+After running `npm run test:coverage`, you can view the detailed HTML coverage report:
+```sh
+# Open coverage/lcov-report/index.html in your browser
+open coverage/lcov-report/index.html  # macOS
+xdg-open coverage/lcov-report/index.html  # Linux
+start coverage/lcov-report/index.html  # Windows
+```
+
+#### Backend Test Structure
+```
+backend/src/
+├── application/__tests__/
+│   ├── validator.test.ts (33 test cases)
+│   └── services/__tests__/
+│       ├── candidateService.test.ts (15 test cases)
+│       └── fileUploadService.test.ts (12 test cases)
+├── domain/models/__tests__/
+│   ├── Candidate.test.ts (21 test cases)
+│   ├── Education.test.ts (12 test cases)
+│   ├── WorkExperience.test.ts (13 test cases)
+│   └── Resume.test.ts (9 test cases)
+└── presentation/controllers/__tests__/
+    └── candidateController.test.ts (6 test cases)
+
+Total: 121 test cases
+```
+
+### Frontend Tests
+
+The frontend uses **Jest** with **@testing-library/react** for component testing. Code coverage threshold is set to **≥ 85%**.
+
+#### Prerequisites
+Install Babel dependencies for Jest (if not already installed):
+```sh
+cd frontend
+npm install --save-dev @babel/preset-env @babel/preset-react babel-jest identity-obj-proxy
+```
+
+#### Run Tests
+```sh
+cd frontend
+
+# Run all tests
+npm test
+
+# Run tests with coverage report
+npm run test:coverage
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+#### Coverage Report
+After running `npm run test:coverage`, view the HTML coverage report:
+```sh
+# Open coverage/lcov-report/index.html in your browser
+open coverage/lcov-report/index.html  # macOS
+xdg-open coverage/lcov-report/index.html  # Linux
+start coverage/lcov-report/index.html  # Windows
+```
+
+#### Frontend Test Structure
+```
+frontend/src/
+├── services/__tests__/
+│   └── candidateService.test.js (10 test cases)
+├── components/__tests__/
+│   ├── FileUploader.test.js (15 test cases)
+│   ├── AddCandidateForm.test.js (38 test cases)
+│   └── RecruiterDashboard.test.js (5 test cases)
+└── __tests__/
+    └── App.test.js (6 test cases)
+
+Total: 74 test cases
+```
+
+### Test Best Practices Used
+
+- **AAA Pattern**: All tests follow Arrange-Act-Assert structure with clear comments
+- **Descriptive Naming**: Test names describe expected behavior in Spanish
+- **Comprehensive Mocking**: External dependencies (Prisma, axios, fetch) are properly mocked
+- **Edge Cases**: Tests cover error handling, null/undefined values, and boundary conditions
+- **Integration Tests**: Include end-to-end workflow testing for critical paths
+
 ## Docker y PostgreSQL
 
 This project uses Docker to run a PostgreSQL database. Here’s how to get it up and running:
@@ -230,6 +347,123 @@ npm start
 ```
 
 El servidor backend estará corriendo en http://localhost:3010 y el frontend estará disponible en http://localhost:3000.
+
+## Ejecutar Pruebas
+
+Este proyecto incluye pruebas unitarias completas tanto para backend como para frontend con altos objetivos de cobertura de código.
+
+### Pruebas del Backend
+
+El backend utiliza **Jest** con **ts-jest** para soporte de TypeScript. El umbral de cobertura de código está configurado en **≥ 90%**.
+
+#### Prerequisitos
+Todas las dependencias de pruebas ya están incluidas en `package.json`. Si necesitas reinstalar:
+```sh
+cd backend
+npm install
+```
+
+#### Ejecutar Pruebas
+```sh
+cd backend
+
+# Ejecutar todas las pruebas
+npm test
+
+# Ejecutar pruebas con reporte de cobertura
+npm run test:coverage
+
+# Ejecutar pruebas en modo observación (se re-ejecutan automáticamente al cambiar archivos)
+npm run test:watch
+
+# Ejecutar pruebas en modo verbose
+npm run test:verbose
+```
+
+#### Reporte de Cobertura
+Después de ejecutar `npm run test:coverage`, puedes ver el reporte de cobertura detallado en HTML:
+```sh
+# Abrir coverage/lcov-report/index.html en tu navegador
+open coverage/lcov-report/index.html  # macOS
+xdg-open coverage/lcov-report/index.html  # Linux
+start coverage/lcov-report/index.html  # Windows
+```
+
+#### Estructura de Pruebas del Backend
+```
+backend/src/
+├── application/__tests__/
+│   ├── validator.test.ts (33 casos de prueba)
+│   └── services/__tests__/
+│       ├── candidateService.test.ts (15 casos de prueba)
+│       └── fileUploadService.test.ts (12 casos de prueba)
+├── domain/models/__tests__/
+│   ├── Candidate.test.ts (21 casos de prueba)
+│   ├── Education.test.ts (12 casos de prueba)
+│   ├── WorkExperience.test.ts (13 casos de prueba)
+│   └── Resume.test.ts (9 casos de prueba)
+└── presentation/controllers/__tests__/
+    └── candidateController.test.ts (6 casos de prueba)
+
+Total: 121 casos de prueba
+```
+
+### Pruebas del Frontend
+
+El frontend utiliza **Jest** con **@testing-library/react** para pruebas de componentes. El umbral de cobertura de código está configurado en **≥ 85%**.
+
+#### Prerequisitos
+Instalar dependencias de Babel para Jest (si no están instaladas):
+```sh
+cd frontend
+npm install --save-dev @babel/preset-env @babel/preset-react babel-jest identity-obj-proxy
+```
+
+#### Ejecutar Pruebas
+```sh
+cd frontend
+
+# Ejecutar todas las pruebas
+npm test
+
+# Ejecutar pruebas con reporte de cobertura
+npm run test:coverage
+
+# Ejecutar pruebas en modo observación
+npm run test:watch
+```
+
+#### Reporte de Cobertura
+Después de ejecutar `npm run test:coverage`, ver el reporte de cobertura en HTML:
+```sh
+# Abrir coverage/lcov-report/index.html en tu navegador
+open coverage/lcov-report/index.html  # macOS
+xdg-open coverage/lcov-report/index.html  # Linux
+start coverage/lcov-report/index.html  # Windows
+```
+
+#### Estructura de Pruebas del Frontend
+```
+frontend/src/
+├── services/__tests__/
+│   └── candidateService.test.js (10 casos de prueba)
+├── components/__tests__/
+│   ├── FileUploader.test.js (15 casos de prueba)
+│   ├── AddCandidateForm.test.js (38 casos de prueba)
+│   └── RecruiterDashboard.test.js (5 casos de prueba)
+└── __tests__/
+    └── App.test.js (6 casos de prueba)
+
+Total: 74 casos de prueba
+```
+
+### Mejores Prácticas de Pruebas Utilizadas
+
+- **Patrón AAA**: Todas las pruebas siguen la estructura Arrange-Act-Assert con comentarios claros
+- **Nomenclatura Descriptiva**: Los nombres de las pruebas describen el comportamiento esperado en español
+- **Mocking Completo**: Las dependencias externas (Prisma, axios, fetch) están correctamente mockeadas
+- **Casos Límite**: Las pruebas cubren manejo de errores, valores null/undefined y condiciones de frontera
+- **Pruebas de Integración**: Incluyen pruebas de flujos de trabajo completos para rutas críticas
 
 ## Docker y PostgreSQL
 
