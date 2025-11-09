@@ -1,10 +1,14 @@
 {
   "dependencies": {
+    "@types/jest": "^30.0.0",
     "dotenv": "^16.4.5"
   },
   "prisma": {
     "schema": "backend/prisma/schema.prisma"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.9.3"
   }
 }
