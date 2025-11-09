@@ -1,26 +1,27 @@
-import { Resume } from '../Resume';
-import { PrismaClient } from '@prisma/client';
+// Create a shared mock instance
+const mockPrismaInstance = {
+  resume: {
+    create: jest.fn()
+  }
+};
 
-// Mock PrismaClient
+// Mock PrismaClient before importing Resume
 jest.mock('@prisma/client', () => {
-  const mockPrismaClient = {
-    resume: {
-      create: jest.fn()
-    }
-  };
-
   return {
-    PrismaClient: jest.fn(() => mockPrismaClient)
+    PrismaClient: jest.fn(() => mockPrismaInstance)
   };
 });
+
+// Import Resume AFTER mocking PrismaClient
+import { Resume } from '../Resume';
 
 describe('Resume', () => {
   let mockPrisma: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Get the mocked Prisma instance
-    mockPrisma = new PrismaClient();
+    // Use the shared mock instance
+    mockPrisma = mockPrismaInstance;
   });
 
   describe('Constructor', () => {

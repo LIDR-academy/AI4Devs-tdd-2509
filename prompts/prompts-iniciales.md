@@ -94,4 +94,6 @@ El consumo de todo el ejercicio de una sola 'lanzada' consumió gran parte de la
      ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝   ⛝ Autocompact buffer: 45.0k tokens (22.5%)
      ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ 
 
-Al final del ejercicio faltaron algunas dependencias que el mismo agente solucionó
+Al final del ejercicio faltaron algunas dependencias que el mismo agente solucionó.
+El código al hacer las pruebas solicitó algunos cambios.  Hay que evaluar los tradeoffs entre cambiar la implementación (para saber si realmente aporta a mantenibilidad o solo a las pruebas)
+

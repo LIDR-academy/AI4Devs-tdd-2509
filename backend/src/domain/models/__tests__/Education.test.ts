@@ -1,19 +1,17 @@
+// Mock PrismaClient - debe estar antes de cualquier importación que lo use
+const mockEducation = {
+  create: jest.fn(),
+  update: jest.fn()
+};
+
+jest.mock('@prisma/client', () => ({
+  PrismaClient: jest.fn().mockImplementation(() => ({
+    education: mockEducation
+  }))
+}));
+
 import { Education } from '../Education';
 import { PrismaClient } from '@prisma/client';
-
-// Mock PrismaClient
-jest.mock('@prisma/client', () => {
-  const mockPrismaClient = {
-    education: {
-      create: jest.fn(),
-      update: jest.fn()
-    }
-  };
-
-  return {
-    PrismaClient: jest.fn(() => mockPrismaClient)
-  };
-});
 
 describe('Education', () => {
   let mockPrisma: any;
@@ -131,7 +129,7 @@ describe('Education', () => {
         candidateId: null
       };
 
-      mockPrisma.education.create.mockResolvedValue(createdEducation);
+      mockEducation.create.mockResolvedValue(createdEducation);
 
       const education = new Education(data);
 
@@ -139,7 +137,7 @@ describe('Education', () => {
       await education.save();
 
       // Assert
-      expect(mockPrisma.education.create).toHaveBeenCalledWith({
+      expect(mockEducation.create).toHaveBeenCalledWith({
         data: {
           institution: 'Universidad',
           title: 'Ingeniería',
@@ -167,7 +165,7 @@ describe('Education', () => {
         candidateId: 123
       };
 
-      mockPrisma.education.create.mockResolvedValue(createdEducation);
+      mockEducation.create.mockResolvedValue(createdEducation);
 
       const education = new Education(data);
 
@@ -175,7 +173,7 @@ describe('Education', () => {
       await education.save();
 
       // Assert
-      expect(mockPrisma.education.create).toHaveBeenCalledWith({
+      expect(mockEducation.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           candidateId: 123
         })
@@ -199,7 +197,7 @@ describe('Education', () => {
         candidateId: null
       };
 
-      mockPrisma.education.create.mockResolvedValue(createdEducation);
+      mockEducation.create.mockResolvedValue(createdEducation);
 
       const education = new Education(data);
 
@@ -232,7 +230,7 @@ describe('Education', () => {
         candidateId: null
       };
 
-      mockPrisma.education.update.mockResolvedValue(updatedEducation);
+      mockEducation.update.mockResolvedValue(updatedEducation);
 
       const education = new Education(data);
 
@@ -240,8 +238,8 @@ describe('Education', () => {
       await education.save();
 
       // Assert
-      expect(mockPrisma.education.update).toHaveBeenCalled();
-      expect(mockPrisma.education.create).not.toHaveBeenCalled();
+      expect(mockEducation.update).toHaveBeenCalled();
+      expect(mockEducation.create).not.toHaveBeenCalled();
     });
 
     it('debería usar where: { id } correcto', async () => {
@@ -262,7 +260,7 @@ describe('Education', () => {
         candidateId: null
       };
 
-      mockPrisma.education.update.mockResolvedValue(updatedEducation);
+      mockEducation.update.mockResolvedValue(updatedEducation);
 
       const education = new Education(data);
 
@@ -270,7 +268,7 @@ describe('Education', () => {
       await education.save();
 
       // Assert
-      expect(mockPrisma.education.update).toHaveBeenCalledWith({
+      expect(mockEducation.update).toHaveBeenCalledWith({
         where: { id: 456 },
         data: expect.any(Object)
       });
@@ -296,7 +294,7 @@ describe('Education', () => {
         candidateId: 123
       };
 
-      mockPrisma.education.update.mockResolvedValue(updatedEducation);
+      mockEducation.update.mockResolvedValue(updatedEducation);
 
       const education = new Education(data);
 
@@ -304,7 +302,7 @@ describe('Education', () => {
       await education.save();
 
       // Assert
-      expect(mockPrisma.education.update).toHaveBeenCalledWith({
+      expect(mockEducation.update).toHaveBeenCalledWith({
         where: { id: 1 },
         data: {
           institution: 'Universidad',
@@ -326,7 +324,7 @@ describe('Education', () => {
       };
 
       const error = new Error('Database error');
-      mockPrisma.education.update.mockRejectedValue(error);
+      mockEducation.update.mockRejectedValue(error);
 
       const education = new Education(data);
 

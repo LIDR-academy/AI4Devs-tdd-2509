@@ -1,15 +1,41 @@
 import { Request, Response } from 'express';
+
+// Mock completo de multer antes de cualquier importación
+const mockDiskStorage = jest.fn();
+const mockMulter = jest.fn();
+const mockSingle = jest.fn();
+
+// Mock de MulterError
+class MockMulterError extends Error {
+  code: string;
+  field: string;
+  constructor(code: string, field: string) {
+    super(code);
+    this.code = code;
+    this.field = field;
+    this.name = 'MulterError';
+  }
+}
+
+// Configurar los mocks
+jest.mock('multer', () => ({
+  __esModule: true,
+  default: Object.assign(mockMulter, {
+    diskStorage: mockDiskStorage,
+    MulterError: MockMulterError
+  })
+}));
+
+// Importamos después de configurar los mocks
 import multer from 'multer';
 import { uploadFile } from '../fileUploadService';
-
-// Mock multer
-jest.mock('multer');
 
 describe('FileUploadService', () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let jsonMock: jest.Mock;
   let statusMock: jest.Mock;
+  let mockUpload: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -23,60 +49,87 @@ describe('FileUploadService', () => {
       status: statusMock,
       json: jsonMock
     };
+
+    // Setup multer mocks
+    mockUpload = {
+      single: jest.fn().mockReturnValue(mockSingle)
+    };
+    mockMulter.mockReturnValue(mockUpload);
   });
 
   describe('Configuración de storage', () => {
+    let storageConfig: any;
+    let destinationFn: any;
+    let filenameFn: any;
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      
+      // Setup mock to capture storage configuration
+      mockDiskStorage.mockImplementation((config) => {
+        destinationFn = config.destination;
+        filenameFn = config.filename;
+        return config;
+      });
+
+      // Setup multer mock to capture configuration
+      mockMulter.mockImplementation((config) => {
+        storageConfig = config;
+        return {
+          single: jest.fn()
+        };
+      });
+
+      // Re-import the module to trigger the configuration
+      jest.resetModules();
+      require('../fileUploadService');
+    });
+
     it('debería configurar destination a ../uploads/', () => {
       // Arrange
-      const mockDiskStorage = multer.diskStorage as jest.Mock;
-
+      const cbMock = jest.fn();
+      
       // Act
-      // Importar el módulo fuerza la ejecución del código de configuración
-      require('../fileUploadService');
+      destinationFn(null, null, cbMock);
 
       // Assert
       expect(mockDiskStorage).toHaveBeenCalled();
-      const storageConfig = mockDiskStorage.mock.calls[0][0];
-
-      const cbMock = jest.fn();
-      storageConfig.destination(null, null, cbMock);
-
       expect(cbMock).toHaveBeenCalledWith(null, '../uploads/');
     });
 
     it('debería generar filename con timestamp y nombre original', () => {
       // Arrange
-      const mockDiskStorage = multer.diskStorage as jest.Mock;
       const mockFile = { originalname: 'cv.pdf' };
       const mockDate = 1234567890;
+      const cbMock = jest.fn();
 
       jest.spyOn(Date, 'now').mockReturnValue(mockDate);
 
       // Act
-      require('../fileUploadService');
+      filenameFn(null, mockFile, cbMock);
 
       // Assert
-      const storageConfig = mockDiskStorage.mock.calls[0][0];
-      const cbMock = jest.fn();
-      storageConfig.filename(null, mockFile, cbMock);
-
       expect(cbMock).toHaveBeenCalledWith(null, `${mockDate}-cv.pdf`);
     });
   });
 
   describe('fileFilter', () => {
-    let mockFileFilter: any;
+    let fileFilterFn: any;
 
     beforeEach(() => {
-      const mockDiskStorage = multer.diskStorage as jest.Mock;
-      require('../fileUploadService');
+      jest.clearAllMocks();
+      
+      // Setup the mock to capture the fileFilter function
+      mockMulter.mockImplementation((config) => {
+        fileFilterFn = config.fileFilter;
+        return {
+          single: jest.fn()
+        };
+      });
 
-      // Get the multer mock call to extract the config
-      const multerMock = (multer as unknown as jest.Mock);
-      if (multerMock.mock && multerMock.mock.calls.length > 0) {
-        const config = multerMock.mock.calls[0][0];
-        mockFileFilter = config.fileFilter;
-      }
+      // Re-import to trigger configuration
+      jest.resetModules();
+      require('../fileUploadService');
     });
 
     it('debería aceptar archivos PDF (application/pdf)', () => {
@@ -89,9 +142,7 @@ describe('FileUploadService', () => {
       const cbMock = jest.fn();
 
       // Act
-      if (mockFileFilter) {
-        mockFileFilter(mockRequest, mockFile, cbMock);
-      }
+      fileFilterFn(mockRequest, mockFile, cbMock);
 
       // Assert
       expect(cbMock).toHaveBeenCalledWith(null, true);
@@ -107,9 +158,7 @@ describe('FileUploadService', () => {
       const cbMock = jest.fn();
 
       // Act
-      if (mockFileFilter) {
-        mockFileFilter(mockRequest, mockFile, cbMock);
-      }
+      fileFilterFn(mockRequest, mockFile, cbMock);
 
       // Assert
       expect(cbMock).toHaveBeenCalledWith(null, true);
@@ -125,9 +174,7 @@ describe('FileUploadService', () => {
       const cbMock = jest.fn();
 
       // Act
-      if (mockFileFilter) {
-        mockFileFilter(mockRequest, mockFile, cbMock);
-      }
+      fileFilterFn(mockRequest, mockFile, cbMock);
 
       // Assert
       expect(cbMock).toHaveBeenCalledWith(null, false);
@@ -143,9 +190,7 @@ describe('FileUploadService', () => {
       const cbMock = jest.fn();
 
       // Act
-      if (mockFileFilter) {
-        mockFileFilter(mockRequest, mockFile, cbMock);
-      }
+      fileFilterFn(mockRequest, mockFile, cbMock);
 
       // Assert
       expect(cbMock).toHaveBeenCalledWith(null, true);
@@ -162,9 +207,7 @@ describe('FileUploadService', () => {
       const cbMock = jest.fn();
 
       // Act
-      if (mockFileFilter) {
-        mockFileFilter(mockRequest, mockFile, cbMock);
-      }
+      fileFilterFn(mockRequest, mockFile, cbMock);
 
       // Assert
       expect(cbMock).toHaveBeenCalledWith(null, false);
@@ -175,23 +218,28 @@ describe('FileUploadService', () => {
   describe('uploadFile', () => {
     it('debería retornar 200 con filePath y fileType en éxito', () => {
       // Arrange
+      jest.clearAllMocks();
+      
       const mockFile = {
         path: '../uploads/1234567890-cv.pdf',
         mimetype: 'application/pdf',
         originalname: 'cv.pdf'
       };
 
-      mockRequest.file = mockFile as Express.Multer.File;
-
       const mockSingleFn = jest.fn((req, res, callback) => {
+        req.file = mockFile;
         callback(null);
       });
 
-      const mockUpload = {
+      const mockUploadLocal = {
         single: jest.fn().mockReturnValue(mockSingleFn)
       };
+      
+      mockMulter.mockReturnValue(mockUploadLocal);
 
-      (multer as unknown as jest.Mock).mockReturnValue(mockUpload);
+      // Re-import to trigger configuration
+      jest.resetModules();
+      const { uploadFile } = require('../fileUploadService');
 
       // Act
       uploadFile(mockRequest as Request, mockResponse as Response);
@@ -206,17 +254,23 @@ describe('FileUploadService', () => {
 
     it('debería retornar 500 con mensaje de error para MulterError', () => {
       // Arrange
-      const multerError = new multer.MulterError('LIMIT_FILE_SIZE', 'file');
+      jest.clearAllMocks();
+      
+      const multerError = new MockMulterError('LIMIT_FILE_SIZE', 'file');
 
       const mockSingleFn = jest.fn((req, res, callback) => {
         callback(multerError);
       });
 
-      const mockUpload = {
+      const mockUploadLocal = {
         single: jest.fn().mockReturnValue(mockSingleFn)
       };
+      
+      mockMulter.mockReturnValue(mockUploadLocal);
 
-      (multer as unknown as jest.Mock).mockReturnValue(mockUpload);
+      // Re-import to trigger configuration
+      jest.resetModules();
+      const { uploadFile } = require('../fileUploadService');
 
       // Act
       uploadFile(mockRequest as Request, mockResponse as Response);
@@ -230,17 +284,23 @@ describe('FileUploadService', () => {
 
     it('debería retornar 500 para otros errores', () => {
       // Arrange
+      jest.clearAllMocks();
+      
       const genericError = new Error('File system error');
 
       const mockSingleFn = jest.fn((req, res, callback) => {
         callback(genericError);
       });
 
-      const mockUpload = {
+      const mockUploadLocal = {
         single: jest.fn().mockReturnValue(mockSingleFn)
       };
+      
+      mockMulter.mockReturnValue(mockUploadLocal);
 
-      (multer as unknown as jest.Mock).mockReturnValue(mockUpload);
+      // Re-import to trigger configuration
+      jest.resetModules();
+      const { uploadFile } = require('../fileUploadService');
 
       // Act
       uploadFile(mockRequest as Request, mockResponse as Response);
@@ -254,17 +314,21 @@ describe('FileUploadService', () => {
 
     it('debería retornar 400 si no hay archivo (rechazado por filtro)', () => {
       // Arrange
-      mockRequest.file = undefined;
-
+      jest.clearAllMocks();
+      
       const mockSingleFn = jest.fn((req, res, callback) => {
         callback(null);
       });
 
-      const mockUpload = {
+      const mockUploadLocal = {
         single: jest.fn().mockReturnValue(mockSingleFn)
       };
+      
+      mockMulter.mockReturnValue(mockUploadLocal);
 
-      (multer as unknown as jest.Mock).mockReturnValue(mockUpload);
+      // Re-import to trigger configuration
+      jest.resetModules();
+      const { uploadFile } = require('../fileUploadService');
 
       // Act
       uploadFile(mockRequest as Request, mockResponse as Response);
@@ -278,16 +342,24 @@ describe('FileUploadService', () => {
 
     it('debería verificar límite de tamaño (10MB)', () => {
       // Arrange
-      const multerMock = (multer as unknown as jest.Mock);
+      jest.clearAllMocks();
+      let capturedConfig: any;
 
-      // Act
+      mockMulter.mockImplementation((config) => {
+        capturedConfig = config;
+        return {
+          single: jest.fn()
+        };
+      });
+
+      // Re-import to trigger configuration
+      jest.resetModules();
       require('../fileUploadService');
 
       // Assert
-      expect(multerMock).toHaveBeenCalled();
-      const config = multerMock.mock.calls[0][0];
-      expect(config.limits).toBeDefined();
-      expect(config.limits.fileSize).toBe(10 * 1024 * 1024); // 10MB in bytes
+      expect(mockMulter).toHaveBeenCalled();
+      expect(capturedConfig.limits).toBeDefined();
+      expect(capturedConfig.limits.fileSize).toBe(10 * 1024 * 1024); // 10MB in bytes
     });
   });
 });

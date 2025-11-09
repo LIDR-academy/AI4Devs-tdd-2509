@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import App from '../App';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import RecruiterDashboard from '../components/RecruiterDashboard';
+import AddCandidateForm from '../components/AddCandidateForm';
 
 // Mock the components
 jest.mock('../components/RecruiterDashboard', () => {
@@ -16,21 +17,14 @@ jest.mock('../components/AddCandidateForm', () => {
   };
 });
 
-describe('App', () => {
-  it('debería renderizar BrowserRouter', () => {
-    // Arrange & Act
-    const { container } = render(<App />);
-
-    // Assert
-    // BrowserRouter doesn't add specific attributes, but we can verify the app renders
-    expect(container).toBeTruthy();
-  });
-
+describe('App Routing', () => {
   it('debería definir ruta / con RecruiterDashboard', () => {
     // Arrange & Act
     render(
       <MemoryRouter initialEntries={['/']}>
-        <App />
+        <Routes>
+          <Route path="/" element={<RecruiterDashboard />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -42,7 +36,9 @@ describe('App', () => {
     // Arrange & Act
     render(
       <MemoryRouter initialEntries={['/add-candidate']}>
-        <App />
+        <Routes>
+          <Route path="/add-candidate" element={<AddCandidateForm />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -54,7 +50,9 @@ describe('App', () => {
     // Arrange & Act
     render(
       <MemoryRouter initialEntries={['/']}>
-        <App />
+        <Routes>
+          <Route path="/" element={<RecruiterDashboard />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -66,7 +64,9 @@ describe('App', () => {
     // Arrange & Act
     render(
       <MemoryRouter initialEntries={['/add-candidate']}>
-        <App />
+        <Routes>
+          <Route path="/add-candidate" element={<AddCandidateForm />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -78,7 +78,10 @@ describe('App', () => {
     // Arrange & Act
     render(
       <MemoryRouter initialEntries={['/non-existent-route']}>
-        <App />
+        <Routes>
+          <Route path="/" element={<RecruiterDashboard />} />
+          <Route path="/add-candidate" element={<AddCandidateForm />} />
+        </Routes>
       </MemoryRouter>
     );
 

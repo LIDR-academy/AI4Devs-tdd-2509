@@ -1,27 +1,21 @@
+// Mock PrismaClient - debe estar antes de cualquier importación que lo use
+const mockWorkExperience = {
+  create: jest.fn(),
+  update: jest.fn()
+};
+
+jest.mock('@prisma/client', () => ({
+  PrismaClient: jest.fn().mockImplementation(() => ({
+    workExperience: mockWorkExperience
+  }))
+}));
+
 import { WorkExperience } from '../WorkExperience';
 import { PrismaClient } from '@prisma/client';
 
-// Mock PrismaClient
-jest.mock('@prisma/client', () => {
-  const mockPrismaClient = {
-    workExperience: {
-      create: jest.fn(),
-      update: jest.fn()
-    }
-  };
-
-  return {
-    PrismaClient: jest.fn(() => mockPrismaClient)
-  };
-});
-
 describe('WorkExperience', () => {
-  let mockPrisma: any;
-
   beforeEach(() => {
     jest.clearAllMocks();
-    // Get the mocked Prisma instance
-    mockPrisma = new PrismaClient();
   });
 
   describe('Constructor', () => {
@@ -146,7 +140,7 @@ describe('WorkExperience', () => {
         candidateId: null
       };
 
-      mockPrisma.workExperience.create.mockResolvedValue(createdWorkExperience);
+      mockWorkExperience.create.mockResolvedValue(createdWorkExperience);
 
       const workExperience = new WorkExperience(data);
 
@@ -154,7 +148,7 @@ describe('WorkExperience', () => {
       await workExperience.save();
 
       // Assert
-      expect(mockPrisma.workExperience.create).toHaveBeenCalledWith({
+      expect(mockWorkExperience.create).toHaveBeenCalledWith({
         data: {
           company: 'Tech Corp',
           position: 'Developer',
@@ -184,7 +178,7 @@ describe('WorkExperience', () => {
         candidateId: 123
       };
 
-      mockPrisma.workExperience.create.mockResolvedValue(createdWorkExperience);
+      mockWorkExperience.create.mockResolvedValue(createdWorkExperience);
 
       const workExperience = new WorkExperience(data);
 
@@ -192,7 +186,7 @@ describe('WorkExperience', () => {
       await workExperience.save();
 
       // Assert
-      expect(mockPrisma.workExperience.create).toHaveBeenCalledWith({
+      expect(mockWorkExperience.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           candidateId: 123
         })
@@ -218,7 +212,7 @@ describe('WorkExperience', () => {
         candidateId: null
       };
 
-      mockPrisma.workExperience.create.mockResolvedValue(createdWorkExperience);
+      mockWorkExperience.create.mockResolvedValue(createdWorkExperience);
 
       const workExperience = new WorkExperience(data);
 
@@ -226,7 +220,7 @@ describe('WorkExperience', () => {
       await workExperience.save();
 
       // Assert
-      expect(mockPrisma.workExperience.create).toHaveBeenCalledWith({
+      expect(mockWorkExperience.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           description: 'Full stack development'
         })
@@ -251,7 +245,7 @@ describe('WorkExperience', () => {
         candidateId: null
       };
 
-      mockPrisma.workExperience.create.mockResolvedValue(createdWorkExperience);
+      mockWorkExperience.create.mockResolvedValue(createdWorkExperience);
 
       const workExperience = new WorkExperience(data);
 
@@ -285,7 +279,7 @@ describe('WorkExperience', () => {
         candidateId: null
       };
 
-      mockPrisma.workExperience.update.mockResolvedValue(updatedWorkExperience);
+      mockWorkExperience.update.mockResolvedValue(updatedWorkExperience);
 
       const workExperience = new WorkExperience(data);
 
@@ -293,8 +287,8 @@ describe('WorkExperience', () => {
       await workExperience.save();
 
       // Assert
-      expect(mockPrisma.workExperience.update).toHaveBeenCalled();
-      expect(mockPrisma.workExperience.create).not.toHaveBeenCalled();
+      expect(mockWorkExperience.update).toHaveBeenCalled();
+      expect(mockWorkExperience.create).not.toHaveBeenCalled();
     });
 
     it('debería usar where: { id } correcto', async () => {
@@ -316,7 +310,7 @@ describe('WorkExperience', () => {
         candidateId: null
       };
 
-      mockPrisma.workExperience.update.mockResolvedValue(updatedWorkExperience);
+      mockWorkExperience.update.mockResolvedValue(updatedWorkExperience);
 
       const workExperience = new WorkExperience(data);
 
@@ -324,7 +318,7 @@ describe('WorkExperience', () => {
       await workExperience.save();
 
       // Assert
-      expect(mockPrisma.workExperience.update).toHaveBeenCalledWith({
+      expect(mockWorkExperience.update).toHaveBeenCalledWith({
         where: { id: 456 },
         data: expect.any(Object)
       });
@@ -352,7 +346,7 @@ describe('WorkExperience', () => {
         candidateId: 123
       };
 
-      mockPrisma.workExperience.update.mockResolvedValue(updatedWorkExperience);
+      mockWorkExperience.update.mockResolvedValue(updatedWorkExperience);
 
       const workExperience = new WorkExperience(data);
 
@@ -360,7 +354,7 @@ describe('WorkExperience', () => {
       await workExperience.save();
 
       // Assert
-      expect(mockPrisma.workExperience.update).toHaveBeenCalledWith({
+      expect(mockWorkExperience.update).toHaveBeenCalledWith({
         where: { id: 1 },
         data: {
           company: 'Tech Corp',
@@ -383,7 +377,7 @@ describe('WorkExperience', () => {
       };
 
       const error = new Error('Database error');
-      mockPrisma.workExperience.update.mockRejectedValue(error);
+      mockWorkExperience.update.mockRejectedValue(error);
 
       const workExperience = new WorkExperience(data);
 

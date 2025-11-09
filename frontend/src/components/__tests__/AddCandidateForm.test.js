@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AddCandidateForm from '../AddCandidateForm';
@@ -89,7 +89,9 @@ describe('AddCandidateForm', () => {
       const firstNameInput = screen.getByLabelText(/nombre/i);
 
       // Act
-      await userEvent.type(firstNameInput, 'Juan');
+      await act(async () => {
+        await userEvent.type(firstNameInput, 'Juan');
+      });
 
       // Assert
       expect(firstNameInput).toHaveValue('Juan');
@@ -101,7 +103,9 @@ describe('AddCandidateForm', () => {
       const lastNameInput = screen.getByLabelText(/apellido/i);
 
       // Act
-      await userEvent.type(lastNameInput, 'Pérez');
+      await act(async () => {
+        await userEvent.type(lastNameInput, 'Pérez');
+      });
 
       // Assert
       expect(lastNameInput).toHaveValue('Pérez');
@@ -113,7 +117,9 @@ describe('AddCandidateForm', () => {
       const emailInput = screen.getByLabelText(/correo electrónico/i);
 
       // Act
-      await userEvent.type(emailInput, 'juan@example.com');
+      await act(async () => {
+        await userEvent.type(emailInput, 'juan@example.com');
+      });
 
       // Assert
       expect(emailInput).toHaveValue('juan@example.com');
@@ -125,7 +131,9 @@ describe('AddCandidateForm', () => {
       const phoneInput = screen.getByLabelText(/teléfono/i);
 
       // Act
-      await userEvent.type(phoneInput, '612345678');
+      await act(async () => {
+        await userEvent.type(phoneInput, '612345678');
+      });
 
       // Assert
       expect(phoneInput).toHaveValue('612345678');
@@ -137,7 +145,9 @@ describe('AddCandidateForm', () => {
       const addressInput = screen.getByLabelText(/dirección/i);
 
       // Act
-      await userEvent.type(addressInput, 'Calle Mayor 123');
+      await act(async () => {
+        await userEvent.type(addressInput, 'Calle Mayor 123');
+      });
 
       // Assert
       expect(addressInput).toHaveValue('Calle Mayor 123');
@@ -151,7 +161,9 @@ describe('AddCandidateForm', () => {
       const addEducationButton = screen.getByRole('button', { name: /añadir educación/i });
 
       // Act
-      fireEvent.click(addEducationButton);
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
 
       // Assert
       expect(screen.getByPlaceholderText(/institución/i)).toBeInTheDocument();
@@ -164,8 +176,12 @@ describe('AddCandidateForm', () => {
       const addEducationButton = screen.getByRole('button', { name: /añadir educación/i });
 
       // Act
-      fireEvent.click(addEducationButton);
-      fireEvent.click(addEducationButton);
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
 
       // Assert
       const institutionInputs = screen.getAllByPlaceholderText(/institución/i);
@@ -178,7 +194,9 @@ describe('AddCandidateForm', () => {
       const addEducationButton = screen.getByRole('button', { name: /añadir educación/i });
 
       // Act
-      fireEvent.click(addEducationButton);
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
 
       // Assert
       expect(screen.getByPlaceholderText(/institución/i)).toHaveValue('');
@@ -195,9 +213,13 @@ describe('AddCandidateForm', () => {
       const addEducationButton = screen.getByRole('button', { name: /añadir educación/i });
 
       // Act
-      fireEvent.click(addEducationButton);
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
       const deleteButton = screen.getByRole('button', { name: /eliminar/i });
-      fireEvent.click(deleteButton);
+      act(() => {
+        fireEvent.click(deleteButton);
+      });
 
       // Assert
       expect(screen.queryByPlaceholderText(/institución/i)).not.toBeInTheDocument();
@@ -209,15 +231,23 @@ describe('AddCandidateForm', () => {
       const addEducationButton = screen.getByRole('button', { name: /añadir educación/i });
 
       // Act
-      fireEvent.click(addEducationButton);
-      fireEvent.click(addEducationButton);
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
 
       const institutionInputs = screen.getAllByPlaceholderText(/institución/i);
-      await userEvent.type(institutionInputs[0], 'Universidad 1');
-      await userEvent.type(institutionInputs[1], 'Universidad 2');
+      await act(async () => {
+        await userEvent.type(institutionInputs[0], 'Universidad 1');
+        await userEvent.type(institutionInputs[1], 'Universidad 2');
+      });
 
       const deleteButtons = screen.getAllByRole('button', { name: /eliminar/i });
-      fireEvent.click(deleteButtons[0]);
+      act(() => {
+        fireEvent.click(deleteButtons[0]);
+      });
 
       // Assert
       const remainingInstitutionInputs = screen.getAllByPlaceholderText(/institución/i);
@@ -233,9 +263,13 @@ describe('AddCandidateForm', () => {
       const addEducationButton = screen.getByRole('button', { name: /añadir educación/i });
 
       // Act
-      fireEvent.click(addEducationButton);
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
       const institutionInput = screen.getByPlaceholderText(/institución/i);
-      await userEvent.type(institutionInput, 'Universidad Politécnica');
+      await act(async () => {
+        await userEvent.type(institutionInput, 'Universidad Politécnica');
+      });
 
       // Assert
       expect(institutionInput).toHaveValue('Universidad Politécnica');
@@ -247,9 +281,13 @@ describe('AddCandidateForm', () => {
       const addEducationButton = screen.getByRole('button', { name: /añadir educación/i });
 
       // Act
-      fireEvent.click(addEducationButton);
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
       const titleInput = screen.getByPlaceholderText(/título/i);
-      await userEvent.type(titleInput, 'Ingeniería Informática');
+      await act(async () => {
+        await userEvent.type(titleInput, 'Ingeniería Informática');
+      });
 
       // Assert
       expect(titleInput).toHaveValue('Ingeniería Informática');
@@ -261,11 +299,15 @@ describe('AddCandidateForm', () => {
       const addEducationButton = screen.getByRole('button', { name: /añadir educación/i });
 
       // Act
-      fireEvent.click(addEducationButton);
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
       const institutionInput = screen.getByPlaceholderText(/institución/i);
       const titleInput = screen.getByPlaceholderText(/título/i);
 
-      await userEvent.type(institutionInput, 'Universidad');
+      await act(async () => {
+        await userEvent.type(institutionInput, 'Universidad');
+      });
 
       // Assert
       expect(titleInput).toHaveValue('');
@@ -279,9 +321,13 @@ describe('AddCandidateForm', () => {
       const addEducationButton = screen.getByRole('button', { name: /añadir educación/i });
 
       // Act
-      fireEvent.click(addEducationButton);
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
       const startDateInput = screen.getByPlaceholderText(/fecha de inicio/i);
-      fireEvent.change(startDateInput, { target: { value: '2020-09-01' } });
+      act(() => {
+        fireEvent.change(startDateInput, { target: { value: '2020-09-01' } });
+      });
 
       // Assert
       expect(startDateInput).toHaveValue('2020-09-01');
@@ -293,9 +339,13 @@ describe('AddCandidateForm', () => {
       const addEducationButton = screen.getByRole('button', { name: /añadir educación/i });
 
       // Act
-      fireEvent.click(addEducationButton);
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
       const endDateInput = screen.getByPlaceholderText(/fecha de fin/i);
-      fireEvent.change(endDateInput, { target: { value: '2024-06-30' } });
+      act(() => {
+        fireEvent.change(endDateInput, { target: { value: '2024-06-30' } });
+      });
 
       // Assert
       expect(endDateInput).toHaveValue('2024-06-30');
@@ -307,7 +357,9 @@ describe('AddCandidateForm', () => {
       const addEducationButton = screen.getByRole('button', { name: /añadir educación/i });
 
       // Act
-      fireEvent.click(addEducationButton);
+      act(() => {
+        fireEvent.click(addEducationButton);
+      });
       const endDateInput = screen.getByPlaceholderText(/fecha de fin/i);
 
       // Assert
@@ -322,7 +374,9 @@ describe('AddCandidateForm', () => {
       const addExperienceButton = screen.getByRole('button', { name: /añadir experiencia laboral/i });
 
       // Act
-      fireEvent.click(addExperienceButton);
+      act(() => {
+        fireEvent.click(addExperienceButton);
+      });
 
       // Assert
       expect(screen.getByPlaceholderText(/empresa/i)).toBeInTheDocument();
@@ -335,7 +389,9 @@ describe('AddCandidateForm', () => {
       const addExperienceButton = screen.getByRole('button', { name: /añadir experiencia laboral/i });
 
       // Act
-      fireEvent.click(addExperienceButton);
+      act(() => {
+        fireEvent.click(addExperienceButton);
+      });
 
       // Assert
       expect(screen.getByPlaceholderText(/empresa/i)).toHaveValue('');
@@ -350,9 +406,13 @@ describe('AddCandidateForm', () => {
       const addExperienceButton = screen.getByRole('button', { name: /añadir experiencia laboral/i });
 
       // Act
-      fireEvent.click(addExperienceButton);
+      act(() => {
+        fireEvent.click(addExperienceButton);
+      });
       const deleteButton = screen.getByRole('button', { name: /eliminar/i });
-      fireEvent.click(deleteButton);
+      act(() => {
+        fireEvent.click(deleteButton);
+      });
 
       // Assert
       expect(screen.queryByPlaceholderText(/empresa/i)).not.toBeInTheDocument();
@@ -366,9 +426,13 @@ describe('AddCandidateForm', () => {
       const addExperienceButton = screen.getByRole('button', { name: /añadir experiencia laboral/i });
 
       // Act
-      fireEvent.click(addExperienceButton);
+      act(() => {
+        fireEvent.click(addExperienceButton);
+      });
       const companyInput = screen.getByPlaceholderText(/empresa/i);
-      await userEvent.type(companyInput, 'Tech Corp');
+      await act(async () => {
+        await userEvent.type(companyInput, 'Tech Corp');
+      });
 
       // Assert
       expect(companyInput).toHaveValue('Tech Corp');
@@ -380,9 +444,13 @@ describe('AddCandidateForm', () => {
       const addExperienceButton = screen.getByRole('button', { name: /añadir experiencia laboral/i });
 
       // Act
-      fireEvent.click(addExperienceButton);
+      act(() => {
+        fireEvent.click(addExperienceButton);
+      });
       const positionInput = screen.getByPlaceholderText(/puesto/i);
-      await userEvent.type(positionInput, 'Software Developer');
+      await act(async () => {
+        await userEvent.type(positionInput, 'Software Developer');
+      });
 
       // Assert
       expect(positionInput).toHaveValue('Software Developer');
@@ -394,7 +462,9 @@ describe('AddCandidateForm', () => {
       const addExperienceButton = screen.getByRole('button', { name: /añadir experiencia laboral/i });
 
       // Act
-      fireEvent.click(addExperienceButton);
+      act(() => {
+        fireEvent.click(addExperienceButton);
+      });
 
       // Note: The component doesn't have a description field visible in the form,
       // but this test is here for completeness based on the plan
@@ -410,7 +480,9 @@ describe('AddCandidateForm', () => {
       const mockUploadButton = screen.getByRole('button', { name: /mock upload/i });
 
       // Act
-      fireEvent.click(mockUploadButton);
+      act(() => {
+        fireEvent.click(mockUploadButton);
+      });
 
       // Assert - verify the upload button was clicked
       // (state update is internal, we can verify through submission)
@@ -432,9 +504,11 @@ describe('AddCandidateForm', () => {
       const preventDefaultSpy = jest.fn();
 
       // Act
-      const event = new Event('submit', { bubbles: true, cancelable: true });
-      event.preventDefault = preventDefaultSpy;
-      form.dispatchEvent(event);
+      await act(async () => {
+        const event = new Event('submit', { bubbles: true, cancelable: true });
+        event.preventDefault = preventDefaultSpy;
+        form.dispatchEvent(event);
+      });
 
       // Assert
       expect(preventDefaultSpy).toHaveBeenCalled();
@@ -451,18 +525,26 @@ describe('AddCandidateForm', () => {
       render(<AddCandidateForm />);
 
       // Fill basic fields
-      await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
-      await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
-      await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
+      await act(async () => {
+        await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
+        await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
+        await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
+      });
 
       // Add education with dates
-      fireEvent.click(screen.getByRole('button', { name: /añadir educación/i }));
-      fireEvent.change(screen.getByPlaceholderText(/fecha de inicio/i), {
-        target: { value: '2020-09-01' }
+      act(() => {
+        fireEvent.click(screen.getByRole('button', { name: /añadir educación/i }));
+      });
+      act(() => {
+        fireEvent.change(screen.getByPlaceholderText(/fecha de inicio/i), {
+          target: { value: '2020-09-01' }
+        });
       });
 
       // Act
-      fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      });
 
       // Assert
       await waitFor(() => {
@@ -481,10 +563,12 @@ describe('AddCandidateForm', () => {
       render(<AddCandidateForm />);
 
       // Act
-      await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
-      await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
-      await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
-      fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      await act(async () => {
+        await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
+        await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
+        await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
+        fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      });
 
       // Assert
       await waitFor(() => {
@@ -511,10 +595,12 @@ describe('AddCandidateForm', () => {
       render(<AddCandidateForm />);
 
       // Act
-      await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
-      await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
-      await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
-      fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      await act(async () => {
+        await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
+        await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
+        await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
+        fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      });
 
       // Assert
       await waitFor(() => {
@@ -533,10 +619,12 @@ describe('AddCandidateForm', () => {
       render(<AddCandidateForm />);
 
       // Act
-      await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
-      await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
-      await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
-      fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      await act(async () => {
+        await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
+        await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
+        await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
+        fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      });
 
       // Assert
       await waitFor(() => {
@@ -557,10 +645,12 @@ describe('AddCandidateForm', () => {
       render(<AddCandidateForm />);
 
       // Act
-      await userEvent.type(screen.getByLabelText(/nombre/i), 'J');
-      await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
-      await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'invalid');
-      fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      await act(async () => {
+        await userEvent.type(screen.getByLabelText(/nombre/i), 'J');
+        await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
+        await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'invalid');
+        fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      });
 
       // Assert
       await waitFor(() => {
@@ -579,10 +669,12 @@ describe('AddCandidateForm', () => {
       render(<AddCandidateForm />);
 
       // Act
-      await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
-      await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
-      await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
-      fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      await act(async () => {
+        await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
+        await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
+        await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
+        fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      });
 
       // Assert
       await waitFor(() => {
@@ -601,10 +693,12 @@ describe('AddCandidateForm', () => {
       render(<AddCandidateForm />);
 
       // Act
-      await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
-      await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
-      await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
-      fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      await act(async () => {
+        await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
+        await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
+        await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
+        fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      });
 
       // Assert
       await waitFor(() => {
@@ -623,10 +717,12 @@ describe('AddCandidateForm', () => {
       render(<AddCandidateForm />);
 
       // Act
-      await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
-      await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
-      await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
-      fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      await act(async () => {
+        await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
+        await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
+        await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
+        fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      });
 
       // Assert
       await waitFor(() => {
@@ -647,23 +743,37 @@ describe('AddCandidateForm', () => {
       render(<AddCandidateForm />);
 
       // Act
-      await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
-      await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
-      await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
+      await act(async () => {
+        await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
+        await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
+        await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
+      });
 
       // Add education
-      fireEvent.click(screen.getByRole('button', { name: /añadir educación/i }));
-      await userEvent.type(screen.getByPlaceholderText(/institución/i), 'Universidad');
+      act(() => {
+        fireEvent.click(screen.getByRole('button', { name: /añadir educación/i }));
+      });
+      await act(async () => {
+        await userEvent.type(screen.getByPlaceholderText(/institución/i), 'Universidad');
+      });
 
       // Add work experience
-      fireEvent.click(screen.getByRole('button', { name: /añadir experiencia laboral/i }));
-      await userEvent.type(screen.getByPlaceholderText(/empresa/i), 'Tech Corp');
+      act(() => {
+        fireEvent.click(screen.getByRole('button', { name: /añadir experiencia laboral/i }));
+      });
+      await act(async () => {
+        await userEvent.type(screen.getByPlaceholderText(/empresa/i), 'Tech Corp');
+      });
 
       // Upload CV
-      fireEvent.click(screen.getByRole('button', { name: /mock upload/i }));
+      act(() => {
+        fireEvent.click(screen.getByRole('button', { name: /mock upload/i }));
+      });
 
       // Submit
-      fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      });
 
       // Assert
       await waitFor(() => {
@@ -682,10 +792,12 @@ describe('AddCandidateForm', () => {
       render(<AddCandidateForm />);
 
       // Act
-      await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
-      await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
-      await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
-      fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      await act(async () => {
+        await userEvent.type(screen.getByLabelText(/nombre/i), 'Juan');
+        await userEvent.type(screen.getByLabelText(/apellido/i), 'Pérez');
+        await userEvent.type(screen.getByLabelText(/correo electrónico/i), 'juan@example.com');
+        fireEvent.click(screen.getByRole('button', { name: /enviar/i }));
+      });
 
       // Assert
       await waitFor(() => {

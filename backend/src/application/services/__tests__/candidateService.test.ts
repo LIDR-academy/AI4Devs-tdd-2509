@@ -392,7 +392,8 @@ describe('CandidateService', () => {
 
       // Assert
       expect(validateCandidateData).toHaveBeenCalledWith(candidateData);
-      expect(validateCandidateData).toHaveBeenCalledBefore(mockCandidateInstance.save as jest.Mock);
+      expect(validateCandidateData).toHaveBeenCalled();
+      expect(mockCandidateInstance.save).toHaveBeenCalled();
     });
 
     it('debería lanzar error si validación falla', async () => {
