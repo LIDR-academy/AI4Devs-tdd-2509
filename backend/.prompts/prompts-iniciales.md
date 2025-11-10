@@ -32,8 +32,8 @@
 **Objetivo:** Generar tests unitarios en Jest a partir de las historias de usuario planificadas. 
 
 **Entradas:** 
-- Revisar la estructura de test`backend/src/_tests_`  
-
+- Revisar la estructura de test`backend/src/_tests_`
+- Analizar `backend/docs/project-description.md` para tener contexto
 - Analizar`backend/docs/user-histories.md` para implementar los tests unitarios sugeridos de cada historia de usuario propuesta en ese documento.
 
 **Salidas:**
