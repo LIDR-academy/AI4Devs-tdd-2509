@@ -1,74 +1,22 @@
 import { uniqueEmail } from '../data.factory';
+import { buildCandidateServicePayload } from '../../../src/tests/unit/fixtures/candidate.fixture';
 
-type CandidatePayload = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  address?: string;
-  educations?: Array<{
-    institution: string;
-    title: string;
-    startDate: string;
-    endDate: string;
-  }>;
-  workExperiences?: Array<{
-    company: string;
-    position: string;
-    description?: string;
-    startDate: string;
-    endDate?: string;
-  }>;
-  cv?: {
-    filePath: string;
-    fileType: string;
-  };
-};
+type CandidatePayload = ReturnType<typeof buildCandidateServicePayload>;
 
-export const buildValidCandidatePayload = (overrides: Partial<CandidatePayload> = {}): CandidatePayload => ({
-  firstName: 'María',
-  lastName: 'López',
-  email: uniqueEmail(),
-  phone: '611223344',
-  address: 'Calle Falsa 123',
-  educations: [
-    {
-      institution: 'Universidad de Buenos Aires',
-      title: 'Ingeniería en Sistemas',
-      startDate: '2015-03-01',
-      endDate: '2020-12-15',
-    },
-  ],
-  workExperiences: [
-    {
-      company: 'LTI',
-      position: 'Backend Developer',
-      description: 'Desarrollo de APIs',
-      startDate: '2021-01-01',
-      endDate: '2024-06-30',
-    },
-  ],
-  cv: {
-    filePath: 'uploads/cv.pdf',
-    fileType: 'application/pdf',
-  },
-  ...overrides,
-});
+type Overrides = Partial<CandidatePayload>;
 
-export const buildCandidateMissingFieldPayload = () => {
-  const { email, ...rest } = buildValidCandidatePayload();
-  return {
-    ...rest,
+const buildBaseCandidate = (overrides: Overrides = {}): CandidatePayload => {
+  const email = overrides.email ?? uniqueEmail();
+  return buildCandidateServicePayload({
     email,
-    firstName: '',
-  };
+    ...overrides,
+  });
 };
 
-export const buildDuplicateCandidatePayload = (email: string) =>
-  buildValidCandidatePayload({ email });
+export const buildValidCandidatePayload = (overrides: Overrides = {}) => buildBaseCandidate(overrides);
 
 export const buildMinimalCandidatePayload = () =>
-  buildValidCandidatePayload({
+  buildBaseCandidate({
     phone: undefined,
     address: undefined,
     educations: undefined,
@@ -76,14 +24,22 @@ export const buildMinimalCandidatePayload = () =>
     cv: undefined,
   });
 
-export const buildInvalidCandidateEmailPayload = () =>
-  buildValidCandidatePayload({ email: 'invalid-email' });
+export const buildCandidateMissingFieldPayload = () => {
+  const payload = buildBaseCandidate();
+  return {
+    ...payload,
+    firstName: '',
+  };
+};
 
-export const buildInvalidCandidatePhonePayload = () =>
-  buildValidCandidatePayload({ phone: '12345' });
+export const buildDuplicateCandidatePayload = (email: string) => buildBaseCandidate({ email });
+
+export const buildInvalidCandidateEmailPayload = () => buildBaseCandidate({ email: 'invalid-email' });
+
+export const buildInvalidCandidatePhonePayload = () => buildBaseCandidate({ phone: '12345' });
 
 export const buildInvalidEducationPayload = () =>
-  buildValidCandidatePayload({
+  buildBaseCandidate({
     educations: [
       {
         institution: 'Universidad de Buenos Aires',
@@ -95,7 +51,7 @@ export const buildInvalidEducationPayload = () =>
   });
 
 export const buildInvalidWorkExperiencePayload = () =>
-  buildValidCandidatePayload({
+  buildBaseCandidate({
     workExperiences: [
       {
         company: 'LTI',
