@@ -1,0 +1,180 @@
+## Tool: Claude
+
+# Prompt 1
+
+You an expert in requirements analysis with experience working with Application Tracking Systems.
+
+On the backend and frontend folders, you have the context for the feature "insert candidates into the database". Based on that, your job is to write acceptance criteria in Gherkin format for both "Handling data on the form" and "Saving data into the database" user stories. Do it in two separate files for each user story in Markdown format ready to be downloaded.
+
+# Prompt 2
+
+Now you are a software developer with experience in web development and unit testing using ts-jest.
+
+Based on the acceptance criteria, select two (2) of them that are the most important for unit testing for each user story.
+
+## Tool: GitHub Copilot
+
+# Prompt 3
+
+There are attached the acceptance criteria for the "Form handling" and "Database saving" user stories. Taking into consideration the acceptance criteria 4 and 13 for "Form handling", and 12 and 26 for "Database saving" user stories, your job is to translate each acceptance criteria into unit tests (1 acceptance criterion -> 1 unit test).
+
+Follow these good practices:
+
+- Descriptive names that indicate clearly what the test is actually testing.
+- AAA pattern (Arrange-Act-Assert) for structuring the tests.
+- Avoid duplication of code by using parameterization.
+- Define edge cases.
+- If neccessary, define mocks for the database.
+
+First, show me what's the plan and do not write any code until I agree with that.
+
+## Agent's response:
+
+Tests to create (one acceptance criterion => one unit test)
+
+### Frontend — Acceptance 4: Form Validation - Email
+
+- Test name suggestion: should_validate_email_field_accept_and_reject_expected_formats
+- Contract:
+    - Input: email string from the form
+    - Output: validation result object (isValid boolean, errorMessage string|null)
+    - Success criteria: valid emails pass; invalid ones fail with correct error message
+- AAA: 
+    - Arrange: import the form validator or component function that validates email; prepare a table of email cases.
+    - Act: run validator for each email case (parameterized).
+    - Assert: for each case assert isValid and errorMessage equals expected.
+- Parameterization: valid cases (simple, subdomain, + tag, Spanish characters if applicable), invalid cases (missing @, missing domain, contains spaces, numbers or special chars if disallowed), empty string.    
+- Edge cases: extremely long local-part (near limits), emails with uppercase letters (should be accepted), email with multiple dots in domain.
+- Files/Mocks: if validation is in AddCandidateForm.js or a validator util, import that directly. No DB/network mocks needed.
+
+### Frontend — Acceptance 13: Form Submission - Success
+
+- Test name suggestion: should_prepare_payload_and_post_candidate_then_show_success_on_201
+- Contract:
+    - Input: filled form state (personal info, education/work arrays, optional resume object)
+    - Output: POST request to backend and a frontend success handler produces success message
+    - Success criteria: POST sent to http://localhost:3010/candidates with correctly formatted body (dates as YYYY-MM-DD, nested arrays and resume file info if present); on simulated 201 response, component shows "Candidato añadido con éxito".
+- AAA:
+    - Arrange: mount or shallow-render the form component (or test the submit handler function) with required fields filled; mock HTTP client (fetch or axios) to intercept POST and return 201.
+    - Act: trigger the submit action (call submit handler or simulate click).
+    - Assert: captured request URL and body equals expected structure and formatting; UI state shows success message; confirm spinner behavior (optional).
+- Parameterization: test with resume present and resume absent (edge case).
+- Mocks: mock fetch/axios with jest.fn() to capture method, URL, headers, and payload. If component uses a candidateService, mock the service module instead.
+- Notes: Keep test isolated from network. Use date strings in ISO format and ensure any date pickers convert to YYYY-MM-DD in payload.
+
+### Backend — Acceptance 12: Database Constraint - Unique Email
+
+- Test name suggestion: should_return_400_when_prisma_throws_P2002_for_duplicate_email
+- Contract:
+    - Input: candidate creation payload with an email already present in DB
+    - Output: service/controller returns 400 and message "The email already exists in the database"
+    - Success criteria: when Prisma throws a known request error with code 'P2002', controller catches and maps to 400 error and expected message
+- AAA:
+    - Arrange: mock Prisma client's create method (or transaction) to throw PrismaClientKnownRequestError with code 'P2002' (construct using same shape Prisma uses). Prepare request object.
+    - Act: call controller/service addCandidate function.
+    - Assert: result is an error response with status 400 and JSON message matching the acceptance criteria.
+- Mocks: replace Prisma client with a mock object; if controller wraps errors into Error instances, test for correct status/message mapping.
+- Edge cases: ensure other Prisma errors are not treated as P2002 (test not required here but mentionable).
+
+### Backend — Acceptance 26: Service Layer Processing
+
+- Test name suggestion: service_addCandidate_creates_candidate_and_nested_records_and_returns_complete_object
+- Contract:
+    - Input: full candidate payload (personal info, education[], workExperience[], optional resume)
+    - Output: saved candidate object with id and nested arrays/objects as returned by DB
+    - Success criteria: addCandidate calls Prisma create/transaction correctly, returns assembled saved object (includes generated id), and handles empty arrays
+- AAA:
+    - Arrange: mock Prisma client transactional flow (prisma.$transaction) or sequential calls to prisma.candidate.create and related creates; supply expected returned objects (with generated ids and timestamps).
+    - Act: call candidateService.addCandidate(payload).
+    - Assert: verify returned object equals expected aggregated saved candidate; verify Prisma called with expected nested payloads (dates converted to Date or leave as strings if service should convert); verify resume creation called only if resume provided.
+- Parameterization / Edge cases: test with education/workExperience arrays empty and non-empty; test with resume omitted.
+- Mocks: mock prisma methods: prisma.candidate.create, prisma.education.createMany/create, prisma.workExperience.createMany/create, prisma.resume.create; or mock $transaction to validate sequence.
+- Notes: simulate Prisma transaction success return object. Also include behavior for only non-undefined fields being saved.
+
+### Test structure and locations
+
+- Frontend tests: place under frontend/src/__tests__/ or frontend/src/components/__tests__/ matching repo Jest config. Use Jest + React Testing Library (if component testing).
+- Backend tests: place under backend/src/__tests__/ or backend/tests/ depending on jest.config.js in backend.
+- Reuse a tests/utils/mockPrisma.ts helper to create Prisma mock objects for different scenarios.
+- Use parameterized tests via test.each (Jest).
+
+### Mocks and utilities to implement
+- mockFetch or mockAxios to intercept network calls in frontend tests OR mock candidateService module (candidateService.js).
+- mockPrismaClient factory that can simulate success responses and throw PrismaClientKnownRequestError with code 'P2002'.
+sample payload generator for candidate data to avoid duplication.
+- If this plan looks good, I will start implementing the tests (one test file per acceptance criterion) and the small mocks/utilities noted above. Do you want me to proceed?
+
+# Prompt 4
+
+Proceed
+
+## Issue:
+
+javier@MacBook-Pro-de-Javier frontend % npm test
+> frontend@0.1.0 test
+> jest --config jest.config.js
+
+ FAIL  src/components/__tests__/AddCandidateForm.test.js
+  ● Test suite failed to run
+    TypeError: Cannot read properties of undefined (reading 'html')
+      at new JSDOMEnvironment (node_modules/jest-environment-jsdom/build/index.js:72:44)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        0.343 s
+
+## Agent's proposal:
+
+In order to fix the issue, pick one or more:
+
+- Fix the frontend test environment so the frontend test runs here:
+    - Option A (quick): add jest-environment-jsdom matching the Jest version to frontend/devDependencies and run npm install in frontend, then re-run npm test.
+    - Option B: adjust jest.config.js or the test to run without a DOM (test the submit handler function instead of rendering), but that reduces coverage of the actual component behavior.
+    - I can make and run the dependency change for you, or provide the exact commands to run locally and re-run tests.
+- Extract the repeated mock setup into a small test helper file to reduce duplication (I inlined mocks to keep the patch minimal).
+- Expand frontend tests to cover CV upload validation and date formatting on payload (Acceptance 11 & 13 edge cases).
+If you want me to proceed, tell me which of the next steps you prefer:
+
+- Install and run frontend test environment fixes now (I will update package.json devDependencies and run npm install + tests), or
+- I can adjust the frontend test to avoid JSDOM and test the submission handler logic without rendering, or
+- Stop here and let you run the frontend tests locally (I'll give exact commands to install a missing package and run tests).
+
+# Prompt 5
+
+You pick the best option to fix the issue.
+
+## Agent's response:
+
+I'm going to add the missing test environment packages to the frontend devDependencies and then run npm install and the frontend tests so we can verify the JSDOM error is resolved (why: jsdom environment was missing; what: add jsdom and jest-environment-jsdom; expected outcome: frontend tests run).
+
+## Issues:
+
+It turned out into several errors and solutions like: 
+
+| Error | Agent's description and fix |
+| --- | --- |
+| TypeScript version conflict during installation. | I encountered a TypeScript version conflict during installation. It seems we have added jsdom, but npm can't resolve the version since it's looking for TS ^3 or ^4 while I have TS ^5.9.3 in my package.json. Rather than changing the TypeScript version, I’m going to use the --legacy-peer-deps flag to ignore these peer conflicts. I will run npm install with that flag and then proceed to run npm test. |
+| Error with AddCandidateForm.js using ESM import syntax | I'm running into an error with AddCandidateForm.js using ESM import syntax. Jest requires transforming source files, but my configuration is set up for TypeScript only with ts-jest. I need to configure it for JS/JSX using babel-jest or check if ts-jest can handle JS too. Considering the constraints, I think the best approach is to update frontend/jest.config.js to use babel-jest for transforming .js and .jsx files. I’ll need to add 'babel-jest', '@babel/preset-env', and '@babel/preset-react,' along with a .babelrc file. |
+
+## Summary of actions
+
+Summary of actions taken (what I changed)
+
+- Implemented the planned unit tests:
+    - backend:
+        - validator.test.ts — email validation (Acceptance 4).
+        - candidateService.test.ts — duplicate-email handling (P2002) and nested-record processing (Acceptances 12 & 26).
+    - frontend:
+        - AddCandidateForm.test.js — submission behavior and payload + success message (Acceptance 13).
+- Fixed the frontend test environment and made tests runnable:
+    - Added devDependencies to package.json: jsdom, jest-environment-jsdom, babel-jest, @babel/preset-env, @babel/preset-react, identity-obj-proxy.
+    - Added babel.config.js to allow Babel to transpile JSX and modern JS for tests.
+    - Updated jest.config.js:
+        - Use ts-jest for TS files, babel-jest for JS/JSX.
+        - Added moduleNameMapper to mock CSS imports via identity-obj-proxy.
+    - Installed the packages (used --legacy-peer-deps to avoid peer dependency conflicts with older react-scripts).
+- Ran tests:
+    - **Backend tests: PASS (2 suites, 10 tests).**
+    - **Frontend tests: PASS (1 suite, 1 test).**
+    - Fixed successive issues (missing jsdom, babel transform for JSX, CSS import handling) iteratively.
